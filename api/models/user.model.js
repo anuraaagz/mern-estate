@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-    },
+    }
   },
   { timestamps: true } //to record time pf user creation and time of update of the user
 );
