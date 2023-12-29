@@ -21,7 +21,7 @@ export default function CreateListing() {
     type: "rent",
     bedrooms: 1,
     bathrooms: 0,
-    regularPrice: 50,
+    regularPrice: 500,
     discountPrice: 0,
     offer: false,
     parking: false,
@@ -165,7 +165,7 @@ export default function CreateListing() {
             className="border p-3 rounded-lg"
             id="name"
             maxLength="62"
-            minLength="10"
+            minLength="5"
             required
             onChange={handleChange}
             value={formData.name}
@@ -273,7 +273,7 @@ export default function CreateListing() {
               <input
                 type="number"
                 id="regularPrice"
-                min="50"
+                min="500"
                 max="100000000"
                 required
                 className="p-3 border-gray-300 rounded-lg"
