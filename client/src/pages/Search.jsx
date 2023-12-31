@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ListingItem from "../components/ListingItem";
 
 export default function Search() {
   const navigate = useNavigate();
@@ -12,12 +13,15 @@ export default function Search() {
     sort: "created_at",
     order: "desc",
   });
-  const [loading,setLoading] = useState(false);
-  const [listings,setListings] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [listings, setListings] = useState([]);
+
+  console.log(listings);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const searchTermFromUrl = urlParams.get(`searchTerm`);
+    const searchTermFromUrl = urlParams.get("searchTerm");
     const typeFromUrl = urlParams.get("type");
     const parkingFromUrl = urlParams.get("parking");
     const furnishedFromUrl = urlParams.get("furnished");
@@ -45,15 +49,15 @@ export default function Search() {
       });
     }
 
-    const fetchListings = async()=>{
-        setLoading(true);
-        const searchQuery = urlParams.toString();
-        const res = await fetch(`/api/listing/get?${searchQuery}`);
-        const data = res.json();
-        setListings(data);
-        setLoading(false);
+    const fetchListings = async () => {
+      setLoading(true);
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`/api/listing/get?${searchQuery}`);
+      const data = await res.json();
+      setListings(data);
+      setLoading(false);
+    };
 
-    }
     fetchListings();
   }, [location.search]);
 
@@ -71,9 +75,9 @@ export default function Search() {
     }
 
     if (
-      e.target.id === "offer" ||
+      e.target.id === "parking" ||
       e.target.id === "furnished" ||
-      e.target.id === "parking"
+      e.target.id === "offer"
     ) {
       setSidebardata({
         ...sidebardata,
@@ -84,6 +88,7 @@ export default function Search() {
 
     if (e.target.id === "sort_order") {
       const sort = e.target.value.split("_")[0] || "created_at";
+
       const order = e.target.value.split("_")[1] || "desc";
 
       setSidebardata({ ...sidebardata, sort, order });
@@ -97,12 +102,13 @@ export default function Search() {
     urlParams.set("type", sidebardata.type);
     urlParams.set("parking", sidebardata.parking);
     urlParams.set("furnished", sidebardata.furnished);
+    urlParams.set("offer", sidebardata.offer);
     urlParams.set("sort", sidebardata.sort);
     urlParams.set("order", sidebardata.order);
-
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
+
   return (
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
@@ -159,7 +165,7 @@ export default function Search() {
                 id="offer"
                 className="w-5"
                 onChange={handleChange}
-                checked={sidebardata.offer === true}
+                checked={sidebardata.offer}
               />
               <span>Offer</span>
             </div>
@@ -173,7 +179,7 @@ export default function Search() {
                 id="parking"
                 className="w-5"
                 onChange={handleChange}
-                checked={sidebardata.parking === true}
+                checked={sidebardata.parking}
               />
               <span>Parking</span>
             </div>
@@ -183,7 +189,7 @@ export default function Search() {
                 id="furnished"
                 className="w-5"
                 onChange={handleChange}
-                checked={sidebardata.furnished === true}
+                checked={sidebardata.furnished}
               />
               <span>Furnished</span>
             </div>
@@ -209,10 +215,25 @@ export default function Search() {
           </button>
         </form>
       </div>
-      <div className="">
+      <div className="flex-1">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">
-          Listing Results
+          Listing Results:
         </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+          {!loading && listings.length === 0 && (
+            <p className="text-xl text-slate-700">No listing found!</p>
+          )}
+          {loading && (
+            <p className="text-xl text-slate-700 text-center w-full">
+              Loading...
+            </p>
+          )}
+          {!loading &&
+            listings &&
+            listings.map((listing) => (
+              <ListingItem key={listing._id} listing={listing} />
+            ))}
+        </div>
       </div>
     </div>
   );
