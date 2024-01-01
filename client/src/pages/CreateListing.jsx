@@ -54,7 +54,7 @@ export default function CreateListing() {
           setUploading(false);
         })
         .catch((err) => {
-          setImageUploadError("Image upload failed( 2 mb max perr image");
+          setImageUploadError("Image upload failed( 2 MB max per image)");
           setUploading(false);
         });
     } else {
